@@ -1,1 +1,72 @@
-scacchi
+/*********************************************************************************
+*                                                                                *
+*  SSSSSSSSS    CCCCCCCCC   AAAAAAA      CCCCCCCCC    CCCCCCCCC HH       HH  II  *
+* SSSSSSSSS    CCCCCCCCC   AAAAAAAAA    CCCCCCCCC    CCCCCCCCC  HH       HH  II  *
+*SS           CC          AA       AA  CC           CC          HH       HH  II  *
+*SS           CC          AA       AA  CC           CC          HH       HH  II  *
+* SSSSSSSSS   CC          AA       AA  CC           CC          HHHHHHHHHHH  II  *
+*  SSSSSSSSS  CC          AA       AA  CC           CC          HHHHHHHHHHH  II  *
+*          SS CC          AAAAAAAAAAA  CC           CC          HH       HH  II  *
+*          SS CC          AAAAAAAAAAA  CC           CC          HH       HH  II  *
+* SSSSSSSSSS   CCCCCCCCC  AA       AA   CCCCCCCCC    CCCCCCCCC  HH       HH  II  *
+*SSSSSSSSSS     CCCCCCCCC AA       AA    CCCCCCCCC    CCCCCCCCC HH       HH  II  *
+*                                                                                *
+*********************************************************************************/
+
+Programmed by:
+
+Capozzolo Giacomo
+Violante Falzacappa Stefano
+Sani Gabriele 
+
+!----------WARNING----------------!
+This program works correctly and has been tested on Windows and
+Linux, but only on the latter are setted up the function of
+saving and loading game.
+Opening the "Scacchi_main.c" file, at line 21, you can change "debuggo" to 1
+to activate debug (verbose) mode
+!---------------------------------!
+
+
+CHANGELOG
+
+/*__23-12-2010__*\
+Wrote the core of the game, with basic piece structures and working position.
+Skeleton of the chessboard has been created.
+
+/*__26-12-2010__*\
+Completed setup of the chess. Every chess move and kill in
+the correct mode.
+
+/*__28-12-2010__*\
+Wrote the function relative to timer and time gestion
+
+/*__31-12-2010__*\
+Implemented the tail with 10 fastest moves
+
+/*__2-01-2011__*\
+Beginning of general debugging
+
+/*__5-01-2011__*\
+Started the creation of a function to ensure the check-mate
+
+/*__10-01-2011__*\
+Merging of various pieces of code created by us
+
+/*__28-01-2011__*\
+Completed (finally!) functions relative to the check-mate
+
+/*__3-02-2011__*\
+Adding #define to the preprocessor to make the program cross-platform
+
+/*__5-02-2011__*\
+Now the tail correctly print the 10 fastest moves
+
+/*__15-02-2011__*\
+Program splitted in more files, added presentation, help section, final menu settings,
+ and last other things
+
+/*__22-02-2011__*\
+Added saving and loading function (Linux only)
+
+ 
