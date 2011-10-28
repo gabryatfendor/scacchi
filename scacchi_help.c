@@ -1,12 +1,12 @@
 /*******************************
 help()
-Sezione help attivabile durante la partita in qualsiasi momento.
-Consta smeplicemente di una serie di printf, che danno le informazioni 
-base sul programma ai giocatori.
+Help section of the game.
+A simple list of printf, that give basical information about
+the program.
 
-Parametri in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito: nessuno
+Returned value: none
 *******************************/
 void help()
 {

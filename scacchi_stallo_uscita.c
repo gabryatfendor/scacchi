@@ -40,7 +40,7 @@ void stallo()
                 pari=getch();
                 if(pari=='y')
                 { 
-                    dichiaroMatto(testa,puntatore_ad_array_struct,numero_celle, name1, name2);
+                    //dichiaroMatto(testa,puntatore_ad_array_struct,numero_celle, name1, name2);
                     exit(0);
                 }
                 if(pari=='n')

@@ -28,6 +28,14 @@ to activate debug (verbose) mode
 !---------------------------------!
 
 
+INSTALLATION
+
+-Windows: start the scacchi.exe executable file!
+
+-Linux: I suggest you to compile the source code. In a terminal, enter:
+        gcc -o executable_name Scacchi_main.c
+        ./executable_name
+
 CHANGELOG
 
 /*__23-12-2010__*\
