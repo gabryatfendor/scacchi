@@ -1326,8 +1326,8 @@ Returned value: none
 ***************************************/
 void move(int l1, int n1, int l2, int n2, pedina *board[8][8], pedina *pedine)
 {
-	debug("moving");
-	printf("\nmove: %d%d in %d%d\n", l1, n1, l2, n2);
+	debug("muovo");
+	printf("\nmossa: %d%d in %d%d\n", l1, n1, l2, n2);
 	board[n1][l1]->moved++;
 	board[n2][l2] = board[n1][l1];
 	board[n2][l2]->n = n2;
@@ -1336,46 +1336,46 @@ void move(int l1, int n1, int l2, int n2, pedina *board[8][8], pedina *pedine)
 }
 /****************************************
 nexTurn()
-Make the turn change, changing current player value.
+Esegue il cambio di turno, cambiando valore del player di turno.
 
-Entering parameters:
-    player: current player
+Parametri in ingresso:
+    player: giocatore attuale
 
-Returned value: none
+Valore restituito: nessuno
 *****************************************/
 void nexTurn(int *player)
 {
-	*player = (*player==0)? 1 : 0; /*changing current player*/
+	*player = (*player==0)? 1 : 0; //cambio giocatore di turno
 }
 
 
 /************************************
 vittoria()
-Started at checkmate validation, start dichiaroMatto function
+Avviata alla convalida dello scacco matto, avvia la funzione dichiaroMatto
 
-Entering parameters:
-    player: current player
-    name1: player 1 name
-    name2: player 2 name
-    testa: list's head
-    puntatore_ad_array_struct: puntator to struct's array
-    numero_celle: moves' number
+Parametri in ingresso:
+    player: giocatore attuale
+    name1: nome giocatore 1
+    name2: nome giocatore 2
+    testa: testa della lista
+    puntatore_ad_array_struct: puntatore ad array di strutture
+    numero_celle: numero delle mosse eseguite
 ************************************/
 char vittoria(int player,char *name1,char *name2,struct mossa *testa,struct mossa *puntatore_ad_array_struct,int numero_celle)
 {
 	char rigioca;
 	if(player==0)
 	{
-		printf("Congratulations %s, you win!\n",name1);
+		printf("Complimenti %s, hai vinto!\n",name1);
 	}
 	else
 	{
-		printf("Congratulations %s, you win!\n",name2);
+		printf("Complimenti %s, hai vinto!\n",name2);
 	}
-	printf("Press a key to see fastest moves");
+	printf("Premere un tasto qualsiasi per visualizzare le mosse più veloci");
 	getch();
 	dichiaroMatto(testa,puntatore_ad_array_struct,numero_celle, name1, name2);
-	printf("\n\nDo you want to play again? Press y to restart, another key to exit.");
+	printf("\n\nVuoi giocare ancora? Premi y per riniziare, un altro tasto per uscire.");
 	rigioca=getch();
 	return rigioca;
 }
