@@ -1,4 +1,0 @@
-Gabriele: P(a-2) in (a-3) ~ 7.00 secs
-Arianna: P(a-7) in (a-5) ~ 4.00 secs
-Gabriele: P(a-3) in (a-4) ~ 4.00 secs
-Arianna: T(a-8) in (a-6) ~ 5.00 secs
