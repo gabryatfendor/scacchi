@@ -1,19 +1,19 @@
 /****************************************
 uscita()
-Schermata di conferma per l'uscita dal gioco
+Confermation screen to quit from the game
 
-Parametri in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito: nessuno
+Returned value: none
 *****************************************/
 void uscita()
 {
     char esci;
-		        printf("\nSei sicuro di voler uscire? Premi y per uscire, n per continuare a giocare!\n");
+		        printf("\nAre you quitting? Are you sure? Press y to quit, n to go back to the game!\n");
 			    esci=getch();
 			    if(esci=='y')
 			    {
-			    printf("\nGrazie per aver giocato! Buona giornata.");
+			    printf("\nThanks for playing! Have a nice day.");
 			    getch();
 				exit(0);
                 }				
@@ -21,32 +21,33 @@ void uscita()
 				return;
 				else
 				{
-                    printf("\nScelta non consentita, premere y o n\n");
+                    printf("\nNo, you have to press y o n\n");
                     uscita();
                 }    
 }				
 /************************************
 stallo()
-Schermata di conferma per la dichiarazione di stallo.
+Confermation screen for stall.
 
-Parametri in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito: nessuno
+Returned value: none
 ************************************/
 void stallo()
 {
                 char pari;
-                printf("\nDichiarando stallo la partita finira\' in parita\'. Premere y per confermare\nn per annullare.\n");
+                printf("\nDeclaring stall the game will finish null. Press y to confirm\nn to return to game.\n");
                 pari=getch();
                 if(pari=='y')
-                { //stampa le mosse piu' veloci ed esci
+                { 
+                    dichiaroMatto(testa,puntatore_ad_array_struct,numero_celle, name1, name2);
                     exit(0);
                 }
                 if(pari=='n')
                 return;
                 else
                 {
-                    printf("\nScelta non consentita, premere y o n\n");
+                    printf("\nNo, you have to press y o n\n");
                     stallo();
                 }
 }    

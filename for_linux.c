@@ -1,11 +1,11 @@
 /*******************************
 getch()
-Riproduce l'effetto dell funzione getch()
-su piattaforma linux
+Reproduce effect of getch() function
+on Linux.
 
-Parametri in ingresso: nessuno
+Entering Parameters: none
 
-Valore restituito: nessuno
+Returned value: none
 *******************************/
 int getch(void)
 {
@@ -22,21 +22,20 @@ return ch;
 
 /**************************************
 save()
-Salva tutti i dati delle mosse eseguite, prendendole dalla lista,
-e le salva in un file binario, in modo da renderne possibile il caricamento
-in un momento successivo
+Save the data of every moves, picking them from the list,
+and save them in a binary file, so that you can load them later
 
-Parametri in ingresso:
-    pedine: Le strutture contenenti i dati di tutte le pedine
-    board: array bidimensionale di puntatori a struttura, con tutte le informazioni sulla scacchiera
-           e la posizione delle varie pedine
-    name1: nome giocatore 1
-    name 2: nome giocatore 2
-    player: giocatore attuale
-    numero_celle: numero di mosse eseguite sinora
-    testa: puntatore alla testa della lista
+Entering Parameters:
+    pedine: The structs containing all chess data
+    board: bidimensional array of struct puntators, with all the information
+           about the chessboard and the position of every chess
+    name1: player 1 name's
+    name 2: player 2 name's
+    player: current player
+    numero_celle: numebr of moves done up to this point
+    testa: puntator to the head of the list
     
-Valore restituito: nessuno
+Returned value: none
 *****************************************/
 
 void save(pedina *pedine, pedina *board[8][8], char *name1, char *name2, int player, int numero_celle, struct mossa *testa)
@@ -48,18 +47,18 @@ void save(pedina *pedine, pedina *board[8][8], char *name1, char *name2, int pla
 	int n, l, p, i;
 	mosseArray=(struct mossa*)malloc(sizeof(struct mossa)*numero_celle);
 	clear();
-	printf("~~~SALVA PARTITA~~~\n");
-	printf("Inserire il nome da dare al file. Assicurati che non sia già"
-			"presente o verrà sovrascritto!\n");
+	printf("~~~SAVE GAME~~~\n");
+	printf("Insert file name. Be sure it doesn't already"
+			"exist, or it will be overwrited!\n");
 	scanf("%s%*c", fileName);
-	//salvo player
+	/*saving player*/
 	saveStruct.player = player;
-	//salvo numero_celle
+	/*saving numero_celle*/
 	saveStruct.numero_celle = numero_celle;
-	//salvo i nomi dei giocatori
+	/*saving players names*/
 	for(i=0; i<31; i++) { saveStruct.name1[i] = name1[i]; }
 	for(i=0; i<31; i++) { saveStruct.name2[i] = name2[i]; }
-	//salvo board
+	/*saving board*/
 	for(n=0; n<8; n++)
 	{
 		for(l=0; l<8; l++)
@@ -75,10 +74,10 @@ void save(pedina *pedine, pedina *board[8][8], char *name1, char *name2, int pla
 			}
 		}
 	}
-	//raggiungo l'ultimo elemento della lista
+	/*reaching the last element of the list*/
 	tmpUltimo = testa;
 	while(tmpUltimo->prev!=NULL) { tmpUltimo = tmpUltimo->prev; }
-	/*----Ora salvo i dati nel file----*/
+	/*----Now I save data in the file----*/
 	saveFile = fopen(fileName, "w");
 	fwrite(&saveStruct, sizeof(salvataggio), 1, saveFile);
 	tmp = tmpUltimo;
@@ -94,20 +93,20 @@ void save(pedina *pedine, pedina *board[8][8], char *name1, char *name2, int pla
 }
 /************************************
 load()
-Carica i dati di una partita precedente, prendendoli da
-un file precedentemente salvato.
+Load the data of a previous game, taking them from
+a file previously saved.
 
-Parametri in ingresso:
-    pedine: Le strutture contenenti i dati di tutte le pedine
-    board: array bidimensionale di puntatori a struttura, con tutte le informazioni sulla scacchiera
-           e la posizione delle varie pedine
-    name1: nome giocatore 1
-    name 2: nome giocatore 2
-    player: giocatore attuale
-    numero_celle: numero di mosse eseguite sinora
+Entering parameters:
+    pedine: The structs containing all chess data
+    board: bidimensional array of struct puntators, with all the information
+           about the chessboard and the position of every chess
+    name1: player 1 name's
+    name 2: player 2 name's
+    player: current player
+    numero_celle: numebr of moves done up to this point
     
-Valore restituito:
-    testa: la testa della lista
+Returned value:
+    testa: the head of the list
 *************************************/
 struct mossa *load(pedina *pedine, pedina *board[8][8], char *name1, char *name2, char *name, int *player, int *numero_celle)
 {
@@ -118,28 +117,28 @@ struct mossa *load(pedina *pedine, pedina *board[8][8], char *name1, char *name2
 	testa = NULL;
 	int n, l, p, i;
 	clear();
-	printf("~~~CARICA PARTITA~~~\n");
+	printf("~~~LOAD GAME~~~\n");
 	do
 	{
-		printf("Indica il nome del file da caricare, deve essere nella cartella"
-				"del gioco\n");
+		printf("Write the file-name to load, it must be in the"
+				"game folder\n");
 		scanf("%s%*c", fileName);
 		saveFile = fopen(fileName, "r");
 		if(!saveFile)
 		{
-			printf("C'è stato un errore, sicuro di aver indicato "
-					"il file giusto?\n");
+			printf("Error, are you sure that the file "
+					"exist?\n");
 		}
 	} while(!saveFile);
 	fread(&saveStruct, sizeof(salvataggio), 1, saveFile);
-	//carico il giocatore di turno
+	/*loading current player*/
 	*player = saveStruct.player;
-	//carico numero_celle
+	/*loading numero_celle*/
 	*numero_celle = saveStruct.numero_celle;
-	//carico il nome dei 2 giocatori
+	/*loading player names*/
 	for(i=0; i<31; i++) { name1[i] = saveStruct.name1[i]; }
 	for(i=0; i<31; i++) { name2[i] = saveStruct.name2[i]; }
-	//collego board con le pedine
+	/*linking board to pedine*/
 	for(n=0; n<8; n++)
 	{
 		for(l=0; l<8; l++)
@@ -148,7 +147,7 @@ struct mossa *load(pedina *pedine, pedina *board[8][8], char *name1, char *name2
 			board[n][l] = &pedine[p];
 		}
 	}
-	//creo la lista dall'array
+	/*making list from array*/
 	debug("Inizio a prendere la lista");
 	for(i=0; i<*numero_celle; i++)
 	{
@@ -164,9 +163,9 @@ struct mossa *load(pedina *pedine, pedina *board[8][8], char *name1, char *name2
 	}
 	debug("Lista caricata");
 	name = (*player==0)?name1:name2;
-	printf("Caricamento eseguito, ora i giocatori sono:\n%s e %s\n",name1, name2);
-	printf("È il turno di %s\n", name);
-	printf("[premere un tasto per proseguire]");
+	printf("Loading done, now players are:\n%s and %s\n",name1, name2);
+	printf("It's %s turn!\n", name);
+	printf("[Press a key to continue]");
 	getch();
 	return testa;
 }

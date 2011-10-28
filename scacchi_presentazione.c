@@ -1,10 +1,10 @@
 /********************************
 presentazione()
-Schermata di presentazione, costituita da printf.
+Presentation screen, made of printf.
 
-Parametri in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito: nessuno
+Returned value: none
 ********************************/
 void presentazione()
 {
@@ -20,7 +20,7 @@ void presentazione()
     printf("SSSSSSSSSS     CCCCCCCCC AA       AA    CCCCCCCCC    CCCCCCCCC HH       HH  II\n");
     getch();
     printf("\n\n\n\n\n\n");
-    printf("Programmato da:\n Capozzolo Giacomo\n Violante Falzacappa Stefano \n Sani Gabriele\n");
+    printf("Programmed by:\n Capozzolo Giacomo\n Violante Falzacappa Stefano \n Sani Gabriele\n");
     getch();
     clear();
                 return;

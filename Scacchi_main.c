@@ -1,4 +1,4 @@
-/*barbiere:
+/*barber:
 d2 d3
 d7 d5
 e1 c3
@@ -15,59 +15,59 @@ c3 c7
 #include "scacchi_stallo_uscita.c"
 #include "scacchi_presentazione.c"
 /**
-Debuggo va definito a 1 se si vuole visualizzare il debug.
-Attenione: l'output può essere molto e rallentare alcuni passaggi
+Debuggo has to be defined at 1 if you want to see debug.
+Warning: there could be a lot of output, that can even slow your game
 **/
 #define debuggo 0
 
-/*Dichiaro i vari tipi di strutture necessari*/
+/*Declaring various type of structures needed*/
 
-/*Pedina: struttura contenente le informazioni della pedina*/
+/*Pedina: struct containing information about every pawn*/
 typedef struct
 {
-	int player;/*Giocatore di appartenenza*/
-	int moved;/*La pedina è stata mossa o no? (Serve per l'arrocco e la mossa di 2 del pedone*/
-	int l;/*Coordinata 1 della posizione*/
-	int n;/*Coordinata 2 della posizione*/
-	char tipo;/*Che pedina è?*/
+	int player;/*Player owner*/
+	int moved;/*The pawn has been moved? (Needed for castling and starting move of the pawn*/
+	int l;/*Coordinate n°1 of the position*/
+	int n;/*Coordinate n°2 of the position*/
+	char tipo;/*What kind of pawn?*/
 } pedina;
 
-/*Posizione: informazioni sulla posizione della pedina*/
+/*Posizione: information about pawn' position*/
 typedef struct
 {
-	int l;/*Coordinata 1 della posizione*/
-	int n;/*Coordinata 2 della posizione*/
-	pedina *loc;/*Puntatore alla casella*/
+	int l;/*Coordinate n°1 of the position*/
+	int n;/*Coordinate n°2 of the position*/
+	pedina *loc;/*Puntator to the casella*/
 } posizione;
 
-/*Salvataggio: struttura usata per salvare tutti i dati in un file binario*/
+/*Salvataggio: struct used to save data in a binary file*/
 typedef struct
 {
-	int player;//Giocatore di turno
-	int numero_celle;//numero di mosse eseguite
-	char name1[31];//Nome del giocatore 1
-	char name2[31];//Nome del giocatore 2
-	pedina pedine[33];//Array contenente strutture delle pedine
-	int board[8][8];//Array rappresentante la scacchiera
+	int player;/*Current player*/
+	int numero_celle;/*Moves number*/
+	char name1[31];/*Player 1 name*/
+	char name2[31];/*Player 2 name*/
+	pedina pedine[33];/*Array containing pawn structures */
+	int board[8][8];/*Array representing chessboard*/
 } salvataggio;
 
-/*Mossa: informazioni sulla mossa appena eseguita*/
+/*Mossa: information about last move*/
 struct mossa{
-	int player;/*Nome del giocatore che ha eseguito la mossa*/
-	char coordinate[15];/*Coordinate di partenza e arrivo*/
-    double durata_mossa;/*Tempo di durata della mossa in secondi*/
-    struct mossa*next;/*Puntatore a struttura sucessiva*/
-    struct mossa*prev;/*Puntatore a struttura precedente*/};
+	int player;/*Player name that has done the last move*/
+	char coordinate[15];/*Coordinate of beginning and arrive*/
+    double durata_mossa;/*Move's duration in seconds*/
+    struct mossa*next;/*Puntator to next structure*/
+    struct mossa*prev;/*Puntator to previous structure*/};
 
-/*Coda: struttura dove verranno salvate le 10 mosse più veloci*/
+/*Coda: structure where 10 fastest moves will be saved*/
 struct Coda
 {
-	struct mossa *primo;/*testa*/
-	struct mossa *ultimo;/*coda*/
+	struct mossa *primo;/*head*/
+	struct mossa *ultimo;/*tail*/
 };
 
 
-/*Dichiarazioni funzioni*/
+/*Declaring functions*/
 int clear();
 void presentazione();
 void debug(char deb[51]);
@@ -103,25 +103,25 @@ int conteggio_celle(int numero_celle);
 #ifndef _WIN32
 #include <termios.h>
 #include <unistd.h>
-#define MENU "Q: quit ## N: new game ## H: help ## M: muovi\nS: dichiara stallo ## X: salva partita ## C: carica partita"
+#define MENU "Q: quit ## N: new game ## H: help ## M: Move\nS: Stall ## X: Save Game ## C: Load Game"
 int getch(void);
 #include "for_linux.c"
 #else
-#define MENU "Q: quit ## N: new game ## H: help ## M: muovi\nS: dichiara stallo"
+#define MENU "Q: quit ## N: new game ## H: help ## M: Move\nS: Stall"
 #endif
 
 
 /*MAIN*/
 int main()
 {
-	struct mossa *testa; /*Puntatore alla testa della lista*/
-	struct mossa *nuova; /*Puntatore alla nuova cella della lista*/
-	struct mossa *nuova_da_ordinare; /*Puntatore alla nuova mossa prima che venga ordinata */
-	struct mossa *testa_da_ordinare; /*Puntatore alla testa della coda da ordinata*/
-	struct mossa *temp; /*Puntatore a struttura temporanea*/
-	struct mossa *puntatore_ad_array_struct; /*Puntatore ad array di strutture*/
-	testa=NULL;/*Inizializzo la testa a NULL*/
-	testa_da_ordinare=NULL;/*Inizializzo la testa da ordinare a NULL*/
+	struct mossa *testa; /*Puntator to list's head*/
+	struct mossa *nuova; /*Puntator to list's tail*/
+	struct mossa *nuova_da_ordinare; /*Puntator to new move BEFORE is sorted*/
+	struct mossa *testa_da_ordinare; /*Puntator to tail's head to be sorted*/
+	struct mossa *temp; /*Puntator to temporary structure*/
+	struct mossa *puntatore_ad_array_struct; /*Puntator to structure's array*/
+	testa=NULL;/*Initializing head to NULL*/
+	testa_da_ordinare=NULL;/*Initializing head to be sorted to NULL*/
 	char name1[31], name2[31], *name, rigioca, deb[51];
 	char r4[201]=MENU;
 	int i, controlli, sottoScacco=0, partita=1, player=0, numero_celle, contatore3=0;
@@ -160,17 +160,17 @@ int main()
 					continue;
 				case 'c':
 					testa = load(pedine, board, name1, name2, name, &player, &numero_celle);
-					debug("inizio test testa");
+					debug("Initializing head's test");
 					temp=testa;
 					while(temp != NULL)
 					{
-						sprintf(deb, "giocatore: %s\n", (temp->player==0)?name1:name2); debug(deb);
-						sprintf(deb, "mossa: %s\n", temp->coordinate); debug(deb);
-						sprintf(deb, "durata: %.2lf secs\n", temp->durata_mossa); debug(deb);
+						sprintf(deb, "player: %s\n", (temp->player==0)?name1:name2); debug(deb);
+						sprintf(deb, "move: %s\n", temp->coordinate); debug(deb);
+						sprintf(deb, "duration: %.2lf secs\n", temp->durata_mossa); debug(deb);
 						temp=temp->next;
 						contatore3++;
 					}
-					debug("fine test testa");
+					debug("End head's test");
 					continue;
                 #endif
 				case 's':
@@ -192,20 +192,20 @@ int main()
 				prima_della_mossa=0;
 				controlli = 1;
 			}
-			else { printf("\nCoordinate errate, reinseriscile\n"); }
+			else { printf("\nWrong coordinates, re-enter\n"); }
 		}
 		toTest = (player==0)? pedine+27 : pedine+3;	//Re avversario
 		if (scacco(toTest->l, toTest->n, player, board, pedine, player)) {sottoScacco=1; printf("\nScacco al RE\n"); }
 		if (sottoScacco)
 		{
-			debug("SOTTO SCACCO");
+			debug("UNDER CHECK");
 			if(roundRe(toTest->l, toTest->n, player, board, pedine, player))
 			{
-				debug("forse matto??\n");
+				debug("maybe mate??\n");
 				if(checkMatto(toTest->l, toTest->n, board, pedine, player))
 				{
 				    clear();
-					printf("\nScacco matto!!!!!\n");
+					printf("\nCheck mate!!!!!\n");
 					rigioca=vittoria(player,name1,name2,testa,puntatore_ad_array_struct,numero_celle);
 					if(rigioca=='y')
 					{
@@ -217,12 +217,12 @@ int main()
 					}
 					else
 					{
-						printf("\nGrazie per aver giocato! Buona giornata.");
+						printf("\nThank for playing! Have a nice day.");
 						getch();
 						exit(0);
 					}
 				}
-				else {debug("non matto..");}
+				else {debug("not mate..");}
 			}
 		}
 		sprintf(deb, "%c --> moved=%d", pos1.loc->tipo, pos1.loc->moved); debug(deb);
@@ -236,17 +236,17 @@ int main()
 }
 
 //-----------------
-//DEFINISCO LE FUNZIONI
+//DEFINING FUNCTIONS
 //-----------------
 
 /********************************
 clear()
-Richiama la funzione adatta per pulire la console
+Recalling right function to clear console
 
 
-Parametri in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito: nessuno
+Returned value: none
 ********************************/
 int clear()
 {
@@ -263,17 +263,18 @@ int clear()
 
 /******************************
 daCapo()
-Avvia la partita, e viene richiamata
-nel caso si voglia iniziare una nuova partita.
-Contiene a sua volta 2 funzioni: inizio() e getNames()
+Start the game, and it has to be called
+if you want to start a new game.
+It contains 2 functions: inizio() and getNames()
 
-Parametri in ingresso:
-    pedine: Le strutture contenenti i dati di tutte le pedine
-    board: La scacchiera con la posizione di tutte le pedine
-    name1: Nome del primo giocatore
-    name2: Nome del secondo giocatore
+Entering parameters:
+   pedine: The structs containing all pawn data
+    board: bidimensional array of struct puntators, with all the information
+           about the chessboard and the position of every pawn
+    name1: player 1 name's
+    name2: player 2 name's
 
-Valore restituito: nessuno
+Returned value: none
 ********************************/
 void daCapo(pedina *pedine, pedina *board[8][8], char *name1, char *name2, char *name, int *numero_celle)
 {
@@ -286,33 +287,30 @@ void daCapo(pedina *pedine, pedina *board[8][8], char *name1, char *name2, char 
 
 /*******************************
 inizio()
-Crea le strutture delle pedine (32) più la struttura della casella vuota:
-contenute nell'array pedine[32]. Si occupa anche di collegare ogni casella con la struttura alla quale è correlata.
-Le 64 caselle risiedono nell'array bidimensionale board[8][8].
-In questa maniera i 2 array sono collegati in modo da rappresentare la situazione iniziale di gioco.
-Si accede a tutto, quindi, tramite board, con una semplice chiamata in coordinate.
+Creating structures for pawn (32) and the structure of empty square:
+they're contained in the array pedine[32]. It also link every square with the structure (correlated) to it.
+The 64 (caselle) are in the bidimensional array board[8][8].
+In this way the arrays are linked to represent the starting situation of the game.
+So, you can access to everything "board", with a simple coordinate call.
 
-Parametri in ingresso:
-    pedine: Le strutture contenenti i dati di tutte le pedine
-    board: La scacchiera con la posizione di tutte le pedine
+Entering parameters::
+    pedine: The structs containing all pawn data
+    board: bidimensional array of struct puntators, with all the information
+           about the chessboard and the position of every pawn
 
-Valore restituito: nessuno
 
 ********************************/
 void inizio(pedina *pedine, pedina *board[8][8])
 {
 	int casellaUnivoca, n, l, z=0;
-	//Creo la pedina vuota
+	/*Creating empty pawn*/
 	pedine[32].player = 2; pedine[32].moved = 2; pedine[32].tipo='V';
 /********************************
 initPedina()
-Funzione interna a inizio che si occupa di inizializzare
-ogni pedina.
-
-Parametri in ingresso:
-    tipo_:indica il tipo di pedina da creare
-Valore restituito:
-    nessuno
+Function caontained in inizio that initialize every pawn.
+Entering parameter:
+    tipo_:kind of pawn to create
+Returned value: none
 ********************************/
 	void initPedina(char tipo_)
 	{
@@ -328,28 +326,28 @@ Valore restituito:
 	{
 		for(l=0; l<8; l++)
 		{
-			casellaUnivoca = 8*(n+1)-(8-(l+1)); //numero da 1 a 64 rappresentante casella
+			casellaUnivoca = 8*(n+1)-(8-(l+1)); /*number from 1 to 64 representing the square*/
 			switch(casellaUnivoca)
 			{
-				case 1: case 8: case 57: case 64://torre
+				case 1: case 8: case 57: case 64:/*rook*/
 					initPedina('T');
 					break;
-				case 2: case 7: case 58: case 63://cavallo
+				case 2: case 7: case 58: case 63:/*knight*/
 					initPedina('C');
 					break;
-				case 3: case 6: case 59: case 62://alfiere
+				case 3: case 6: case 59: case 62:/*bishop*/
 					initPedina('A');
 					break;
-				case 4: case 60://regina
+				case 4: case 60:/*queen*/
 					initPedina('R');
 					break;
-				case 5: case 61://re
+				case 5: case 61:/*king*/
 					initPedina('D');
 					break;
-				case 9 ... 16: case 49 ... 56://pedone
+				case 9 ... 16: case 49 ... 56:/*pawn*/
 					initPedina('P');
 					break;
-				default://vuota
+				default:/*empty*/
 					board[n][l]=&pedine[32];
 					break;
 			}
@@ -359,46 +357,43 @@ Valore restituito:
 
 /*****************************************
 getNames()
-Prende in ingresso e salva i nomi dei 2 giocatori
+Input and save the players names
 
-Parametri in ingresso:
-    name 1: puntatore alla struttura nella quale verrà salvato il nome del primo giocatore
-    name 2: puntatore alla struttura nella quale verrà salvato il nome del secondo giocatore
+Entering parameters:
+    name1: player 1 name's
+    name2: player 2 name's
 
-Valore restituito: nessuno
+Returned value: none
 *****************************************/
 void getNames(char *name1, char *name2)
 {
-	printf("\nInserire nome Giocatore1: ");
+	printf("\nInsert Player1 name: ");
 	scanf("%s%*c", name1);
-	printf("\nInserire nome Giocatore2: ");
+	printf("\nInsert Player2 name: ");
 	scanf("%s%*c", name2);
 	clear();
 }
 
 /*****************************************
 newtime()
-Si occupa di gestire il salvataggio della durata di ogni mossa.
-Prende il tempo, tramite l'orologio interno del pc, all'inizio
-della mossa, lo prende di nuovo alla fine e calcola la differenza.
-Dopodichè questo valore viene salvato in una struttura che viene
-messa in una lista doppiamente linkata.
-Viene inoltre salvato il nome del giocatore che ha eseguito la
-mossa e le coordinate di partenza e arrivo della mossa ,
-in modo da poter stampare a fine partita, associati alla durata,
-il nome del giocatore che ha fatto la mossa e che pedina è stata
-spostata.
+Manage the saving of the time of every move.
+It take the time, using the CPU clock, at the beginning of every move, 
+it take it again at the end and make the difference between them.
+Then this value is saved in a structure that is put in a double-linked list.
+It also save the name of the player that moved and the starting coordinates
+so that you can print them at the end of the game, the duration,
+player name that moved and pawn that has been moved.
 
-Parametri in ingresso:
-    name: puntatore al nome del giocatore attuale
-    testa: puntatore alla testa della lista
-    nuova: puntatore alla nuova "cella" della lista
-    pos1: posizione di partenza della pedina
-    pos2: posizione di arrivo della pedina
-    prima_della_mossa: orario all'inizio della mossa
+Entering parameters:
+    name: puntator to current player name
+    testa: puntator to list's head
+    nuova: puntator to new "cell" of the list
+    pos1: pawn's starting position
+    pos2: pawn's arriving position
+    prima_della_mossa: CPU time at the move's beginning
 
-Valori restituiti:
-    testa: puntatore alla testa della lista
+Returned value:
+    testa: puntator to list's head
 ******************************************/
 struct mossa* newtime(int player, struct mossa *testa, struct mossa *nuova, posizione *pos1, posizione *pos2,time_t prima_della_mossa, int numero_celle, char *name1, char *name2)
 {
@@ -428,16 +423,16 @@ struct mossa* newtime(int player, struct mossa *testa, struct mossa *nuova, posi
 
 /*********************************************
 coda()
-Prendendo i dati dal risultato della funzione dichiaroMatto,
-copia in una coda le dieci mosse più veloci e le stampa a video.
-Se sono state fatte meno di 10 mosse si ferma prima.
+Picking the data from the function dichiaroMatto,
+copy in a tail the ten fastest moves and it print them to screen.
+If there were less than ten moves, it stop.
 
-Parametri in ingresso:
-    mosse_da_ordinare: puntatore all'array di struct precedentemente creato, con le mosse
-                       ordinate
-    numero_celle: numero delle mosse eseguite
+Entering parameters:
+    mosse_da_ordinare: puntator to struct's array previously created, with 
+                       sorted moves
+    numero_celle: moves number
 
-Valore restituito: nessuno
+Returned value: none
 
 *********************************************/
 void coda(struct mossa *mosse_da_ordinare,int numero_celle, char *name1, char *name2)
@@ -449,7 +444,7 @@ void coda(struct mossa *mosse_da_ordinare,int numero_celle, char *name1, char *n
 	struct Coda coda;
 	coda.primo = NULL;
 	coda.ultimo = NULL;
-	printf("\nLe 10 mosse piÃ¹ veloci sono state:\n");
+	printf("\n10 fastest moves were:\n");
 	for(contatore=0; contatore < 10 && contatore < numero_celle; contatore++)
 	{
 		nuovo_elemento_coda=(struct mossa*)malloc(sizeof(struct mossa));
@@ -470,9 +465,9 @@ void coda(struct mossa *mosse_da_ordinare,int numero_celle, char *name1, char *n
 		coda.ultimo = nuovo_elemento_coda;
 	}
 	temp = coda.primo;
-	while(contatore2<contatore) //le stampo finchÃ¨ non ne trovo una null o finchÃ¨ non arrivo a 10
+	while(contatore2<contatore) /*Print them until I get a NULL or I have printed 10 of them*/
 	{
-		printf("(%d)%s, %s. Durata mossa %.2lf secondi\n", (contatore2+1), (temp->player==0)?name1:name2, temp->coordinate, temp->durata_mossa);
+		printf("(%d)%s, %s. Move duration %.2lf seconds\n", (contatore2+1), (temp->player==0)?name1:name2, temp->coordinate, temp->durata_mossa);
 		temp=temp->next;
 		contatore2++;
 	}
@@ -481,14 +476,13 @@ void coda(struct mossa *mosse_da_ordinare,int numero_celle, char *name1, char *n
 
 /*************************************
 boardCopy()
-Esegue una copia della scacchiera e della posizione
-delle pedine
+Copy the chessboard and pawns position
 
-Parametri in ingresso:
-    board: scacchiera con la posizione di tutte le pedine
-    testBoard: scacchiera temporanea?
+Entering parameters:
+    board: chessboard with position of every pawn
+    testBoard: temporary chessboard
 
-Valore restituito: nessuno
+Returned value: none
 **************************************/
 void boardCopy(pedina *board[8][8], pedina *testBoard[8][8])
 {
@@ -503,13 +497,13 @@ void boardCopy(pedina *board[8][8], pedina *testBoard[8][8])
 }
 /*********************************************
 pedCopy()
-Copia i valori dell'array "pedine" nell'array "testPedine"
+Copy values in "pedine" into "testPedine"
 
-Parametri in ingresso:
-    pedine: puntatore alla posizione della pedina
-    testPedine: puntatore temporaneo alla posizione delle pedine?
+Entering parameters:
+    pedine: puntator to pawn position
+    testPedine: temporary puntatorto pawn position
 
-Valore restituito: nessuno
+Returned value: none
 *********************************************/
 void pedCopy(pedina *pedine, pedina *testPedine)
 {
@@ -521,22 +515,22 @@ void pedCopy(pedina *pedine, pedina *testPedine)
 }
 /**********************************************
 checkMatto()
-Se il re non riesce da solo a liberarsi dallo scacco, questa funzione
-controlla se ciò è possibile muovendo un'altra pedina.
+If the king can't free himself from check, this function check
+if this is possible moving another pawn.
 
-Parametri in ingresso:
-    lr: coordinata 1 della posizione del re
-    nr: coordinata 2 della posizione del re
-    board: scacchiera con la posizione di tutte le pedine
-    pedine: puntatore alle pedine
-    player: riferimento al giocatore corrente
+Entering parameters:
+    lr: coordinate 1 of the king
+    nr: coordinate 2 of the king
+    board: chessboard with every pawn position
+    pedine: puntator to pawn
+    player: referral to current player
 
-Valore restituito
-    1: pone fine ai controlli
+Returned value
+    1: end of controls
 **********************************************/
 int checkMatto(int lr, int nr, pedina *board[8][8], pedina *pedine, int player)
 {
-	debug("inizio checkMatto");
+	debug("starting checkMatto");
 	char deb[51];
 	int o_player, i, j, z, lt, nt, n, l, passaggi, step, flag, deb1=0, deb2=0, deb3=0;
 	int L[8] = {0, 1, 1, 1, 0, -1, -1, -1};
@@ -565,7 +559,7 @@ int checkMatto(int lr, int nr, pedina *board[8][8], pedina *pedine, int player)
 					if(passaggi<8) {lt=lr+(L[passaggi]*step); nt=nr+(N[passaggi]*step);}
 					else
 					{
-						//Testo i passi del cavallo
+						/*Testing knight's steps*/
 						switch(passaggi)
 						{
 							case 0: lt=lr+2; nt=nr+1; break;
@@ -584,7 +578,7 @@ int checkMatto(int lr, int nr, pedina *board[8][8], pedina *pedine, int player)
 					if(checkMove(pedine, testBoard, &pos1, &pos2, o_player, 0))
 					{
 						pedCopy(tmpPedine, pedine);
-						debug("checkMatto fallito");
+						debug("checkMatto failed");
 						return 0;
 					}
 					pedCopy(tmpPedine, pedine);
@@ -594,29 +588,28 @@ int checkMatto(int lr, int nr, pedina *board[8][8], pedina *pedine, int player)
 		}
 	}
 	debug("checkMatto ok");
-	sprintf(deb, "pedine considerate: %d", deb1); debug(deb);
+	sprintf(deb, "considered pawns: %d", deb1); debug(deb);
 	return 1;
 }
 
 
 /*************************************
 roundRe()
-Controlla se tutte le caselle attorno al Re sono sotto scacco
+check if every square around the king is under check
 
-Parametri in ingresso:
-    l: Coordinata 1 del re sotto controllo
-    n: Coordinata 2 del re sotto controllo
-    giocatore: riferimento al giocatore che mette sotto scacco
-    board: scacchiera con la posizione di tutte le pedine
-    pedine: puntatore alla pedina
-    player: riferimento al giocatore attualmente attivo
-
-Valore restituito:
-    1: Pone fine ai controlli
+Entering parameters:
+    l: coordinate 1 of the king
+    n: coordinate 2 of the king
+    giocatore: referral to the player that made check
+    board: chessboard with every pawn position
+    pedine: puntator to pawn
+    player: referral to current player
+Returned value
+    1: end of controls
 **************************************/
 int roundRe(int l, int n, int giocatore, pedina *board[8][8], pedina *pedine, int player)
 {
-	debug("inizio roundRe");
+	debug("starting roundRe");
 	pedina *testBoard[8][8], tmpPedine[33];
 	char deb[51];
 	int i, lt, nt, o_player;
@@ -639,26 +632,26 @@ int roundRe(int l, int n, int giocatore, pedina *board[8][8], pedina *pedine, in
 			move(l, n, lt, nt, testBoard, pedine);
 			if(!scacco(lt, nt, giocatore, testBoard, pedine, player))
 			{
-				debug("Non matto");
-				debug("fine roundRe");
+				debug("Not mate");
+				debug("ending roundRe");
 				pedCopy(tmpPedine, pedine);
 				return 0;
 			}
 		}
 		pedCopy(tmpPedine, pedine);
 	}
-	debug("Fine roundRe");
+	debug("Ending roundRe");
 	return 1;
 }
 
 /**************************************
 debug()
-codice utilizzato per gestire il debug.
+Manage debug (verbose mode).
 
-parametri in ingresso:
-    deb[51]: array di caratteri con le info di debug
+Entering parameters:
+    deb[51]: charachters rray with debug information
 
-valore restituito: nessuno
+Returned value: none
 **************************************/
 void debug(char deb[51])
 {
@@ -676,12 +669,12 @@ void debug(char deb[51])
 
 /*********************************
 userInput()
-Si occupa di salvare l'opzione scelta dal giocatore a inizio turno
+Save the choosen option from the player at the beginning
 
-Parametri in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito:
-    ch: variabile dove è salvata l'opzione scelta dal giocatore
+Returned value:
+    ch: choosen option
 
 *********************************/
 
@@ -706,37 +699,37 @@ char userInput()
 
 /******************************************
 dichiaroMatto()
-Dopo aver accertato lo scacco matto, crea un array di strutture, dove
-vengono salvate tutte le mosse eseguite, poi le ordina in base alla loro durata.
-Infine chiama la funzione coda.
+After checking for check mate, create a structure's array, 
+where are saved moves, then it order for duration.
+Then it call coda function.
 
-Parametri in ingresso:
-    testa: puntatore alla testa della lista
-    puntatore_ad_array_struct: puntatore all'array di strutture ^^
-    numero_celle: numero delle mosse eseguite
+Entering parameters:
+    testa: puntator to list's head
+    puntatore_ad_array_struct: puntator to array of structures
+    numero_celle: moves number
 
-Valore restituito:
-    0
+Returned value:
+        0
 ******************************************/
 int dichiaroMatto(struct mossa *testa,struct mossa *puntatore_ad_array_struct,int numero_celle, char *name1, char *name2)
 {
-	debug("inizio dichiaroMatto");
+	debug("starting dichiaroMatto");
 	char deb[51];
 	int contatore3=0;
 	struct mossa *temp, *tmp, tmp1;
 	struct mossa mosse_da_ordinare[numero_celle];
 	puntatore_ad_array_struct=mosse_da_ordinare;
-	debug("inizio primo debug dichiaroMatto");
+	debug("starting first debug dichiaroMatto");
 	temp=testa;
 	while(temp != NULL)
 	{
-		sprintf(deb, "giocatore: %s\n", (temp->player==0)?name1:name2); debug(deb);
-		sprintf(deb, "mossa: %s\n", temp->coordinate); debug(deb);
-		sprintf(deb, "durata: %.2lf secs\n", temp->durata_mossa); debug(deb);
+		sprintf(deb, "player: %s\n", (temp->player==0)?name1:name2); debug(deb);
+		sprintf(deb, "move: %s\n", temp->coordinate); debug(deb);
+		sprintf(deb, "duration: %.2lf secs\n", temp->durata_mossa); debug(deb);
 		temp=temp->next;
 		contatore3++;
 	}
-	debug("fine primo debug dichiaroMatto");
+	debug("end first debug dichiaroMatto");
 	contatore3=0;
 	temp=testa;
 	while(temp != NULL)
@@ -759,7 +752,7 @@ int dichiaroMatto(struct mossa *testa,struct mossa *puntatore_ad_array_struct,in
 			}
 		}
 	}
-	debug("fine dichiaroMatto");
+	debug("end dichiaroMatto");
 	coda(mosse_da_ordinare, numero_celle, name1, name2);
 	return 0;
 }
@@ -767,13 +760,13 @@ int dichiaroMatto(struct mossa *testa,struct mossa *puntatore_ad_array_struct,in
 
 /*******************************
 showBoard
-Visualizza una scacchiare in caratteri, posizionando le pedine e le caselle vuote.
+Show a charachter chessboard, putting pawns and empty (caselle).
 
-Parametri in ingresso:
-    board: array bidimensionale di puntatori a struttura, con tutte le informazioni sulla scacchiera
-           e la posizione delle varie pedine
+Entering parameters:
+    board: bidimensional array of puntator to struct, with all information about chessboard
+           and position of all pawns
 
-Valore restituito: nessuno
+Returned value: none
 *******************************/
 void showBoard(pedina *board[8][8])
 {
@@ -788,7 +781,7 @@ void showBoard(pedina *board[8][8])
 	    if(board[n][l]->player==1)
 	    {
             printf("\033[1m");
-            //return '-';
+            /*return '-';*/
 	    }
 	    return ' ';
 	}
@@ -797,7 +790,7 @@ void showBoard(pedina *board[8][8])
 		printf("\033[0m");
 		if(board[n][l]->player==1)
 		{
-			//return '-';
+			/*return '-';*/
 		}
 		return ' ';
 	}
@@ -830,23 +823,23 @@ void showBoard(pedina *board[8][8])
 
 /**************************************
 getCoordinate()
-Si occupa di chiedere al giocatore di turno le coordinate per una mossa. Assieme alla funzione letToNum()
-definisce le 4 variabili globali, contenenti le 4 coordinate in versione numerica, da 0 a 7.
-Per la lettera ed il numero di partenza e di arrivo. Inoltre dichiara i due puntatori relativi
-alla struttura “pedina” rappresentata dalle due posizioni.
-Riporta errore se letToNum() ritorna un errore.
+Ask to the current player the coordinates for current move. With the function letToNum()
+define 4 global variables, containin 4 numeric coordinates, from 0 to 7 for letter 
+and number of start and finish. Also declare 2 puntators to pedina structure
+represented by 2 positions.
+Return error if letToNum() return an error.
 
-Parametri in ingresso:
-    board:array bidimensionale di puntatori a struttura, con tutte le informazioni sulla scacchiera
-           e la posizione delle varie pedine
-    pos1: puntatore alla posizione di partenza della pedina
-    pos2: puntatore alla posizione di arrivo della pedina
-    name1: puntatore al nome del giocatore 1
-    name2: puntatore al nome del giocatore 2
-    player: giocatore corrente
+Entering parameters:
+    board: bidimensional array of puntator to struct, with all information about chessboard
+           and position of all pawns
+    pos1: puntator to starting position of pawn
+    pos2: puntator to finishing position of pawn
+    name1: player 1 name
+    name2: player 2 name
+    player: current player
 
-Valore restituito:
-    0 o 1: a seconda che le coordinate siano corrette o no
+Returned value:
+    0 or 1: if coordinates are right or wrong
 **************************************/
 int getCoordinate(pedina *board[8][8], posizione *pos1, posizione *pos2, char *name, int player)
 {
@@ -854,13 +847,13 @@ int getCoordinate(pedina *board[8][8], posizione *pos1, posizione *pos2, char *n
 	int l1, l2, n1, n2;
 /**************************************
 letToNum()
-Trasforma le due coordinate “lettera” nel corrispondente numero (da 0 a 7), completando il lavoro di getCoordinate().
-Riporta errore se una delle 4 coordinate inserite dall'utente non è in {1,2,3,4,5,6,7,8} o in {a,b,c,d,e,f,g,h}
+Convert the charachter of the coordinate in a number (from 0 to 7), completing the job of getCoordinate().
+Return error if any of the 4 coordinates isn't {1,2,3,4,5,6,7,8} or {a,b,c,d,e,f,g,h}
 
-Parametri in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito:
-    0 o 1: a seconda che le coordinate siano corrette o no
+Returned value:
+    0 o 1: if coordinates are right or not
 **************************************/
 	int letToNum()
 	{
@@ -868,7 +861,7 @@ Valore restituito:
 		int *ll[2], i;
 		char deb[51];
 		ll[0]=&l1; ll[1]=&l2;
-		if(n1<1 || n1>8 || n2<1 || n2>8) { printf("Errore: coordinate n fuori range", n1, n2); return 0; }
+		if(n1<1 || n1>8 || n2<1 || n2>8) { printf("Error: n coordinate out of range", n1, n2); return 0; }
 		n1--;
 		n2--;
 		for(i=0; i<2; i++)
@@ -883,14 +876,14 @@ Valore restituito:
 				case 'f': *ll[i]=5; break;
 				case 'g': *ll[i]=6; break;
 				case 'h': *ll[i]=7; break;
-				default: printf("Errore: coordinate l fuori range --> |%c|", L[i]);
+				default: printf("Error: l coordinate out of range --> |%c|", L[i]);
 				return 0;
 			}
 			sprintf(deb, "-[%d]-", *ll[i]); debug(deb);
 		}
 		debug("letToNum ok"); return 1;
 	}
-	printf("\n%s: Inserisci coordinate (LN LN):", name);
+	printf("\n%s: Insert coordinate (LN LN):", name);
 	scanf("%c%d %c%d%*c", &L[0], &n1, &L[1], &n2);
 	sprintf(deb, "-%c-%d-%c-%d-", L[0], n1, L[1], n2); debug(deb);
 	if(letToNum())
@@ -903,24 +896,23 @@ Valore restituito:
 }
 /*************************************
 checkMove()
-Controlla che la mossa sia regolare.
-Inizialmente verificato l'unico caso in cui il player di arrivo può essere lo stesso della partenza: l'arrocco.
-Altrimenti si effettua un controllo specifico a seconda della tipologia di pedina della coordinata iniziale.
-Questa e le funzioni da questa usate, cambiano comportamento a seconda se si sta eseguendo o meno il controllo di scacco
-su una casella, identificato da checkScacco.
-Da notare che la mossa della regina è convalidata con le regole di torre o di alfiere.
-Riporta errore se i controlli utilizzati ritornano un errore.
+Control if move is regular.
+At the beginning verified the only case in wich starting player and arriving player is the same: the castling.
+Otherwise make a specific control depending from the starting pawn.
+This and its sub-functions, change if they are doing the check control on a square, identified by checkScacco.
+Note that the queen move is validated by rook AND bishop.
+Return error if they control return error.
 
-Parametri in ingresso:
-    pedine: puntatore alla pedina
-    board: array bidimensionale di puntatori a struttura, con tutte le informazioni sulla scacchiera
-           e la posizione delle varie pedine
-    pos1: puntatore alla posizione di partenza della pedina
-    pos2: puntatore alla posizione di arrivo della pedina
-    player: giocatore corrente
+Entering parameters:
+    pedine: puntator to pawn
+    board: bidimensional array of puntator to struct, with all information about chessboard
+           and position of all pawns
+    pos1: puntator to starting position of pawn
+    pos2: puntator to finishing position of pawn
+    player: current player
 
-Valore restituito:
-    1: Ferma tutti i controlli
+Returned value:
+    1: Break every control
 *************************************/
 int checkMove(pedina *pedine, pedina *board[8][8], posizione *pos1, posizione *pos2, int player, int checkScacco)
 {
@@ -933,7 +925,7 @@ int checkMove(pedina *pedine, pedina *board[8][8], posizione *pos1, posizione *p
 	sprintf(deb, "posRe: %d - %d", posRe->l, posRe->n); debug(deb);
 	sprintf(deb, "-%c-", (*pos1).loc->tipo); debug(deb);
 	sprintf(deb, "in %d-%d", l2, n2); debug(deb);
-	if((*pos2).loc->player == player && checkScacco==0)	//Valida SOLO per arrocco
+	if((*pos2).loc->player == player && checkScacco==0)	/*Correct ONLY for castling*/
 	{
 		if(checkArrocco(l1, n1, l2, n2, pos1, pos2, board, pedine, player))
 		{
@@ -974,7 +966,7 @@ int checkMove(pedina *pedine, pedina *board[8][8], posizione *pos1, posizione *p
 		move(l1, n1, l2, n2, testBoard, pedine);
 		if (scacco(posRe->l, posRe->n, o_player, testBoard, pedine, player))
 		{
-			printf("\nRE ancora sotto scacco\n");
+			printf("\nKing still under check\n");
 			pedCopy(tmpPedine, pedine);
 			return 0;
 		}
@@ -987,72 +979,72 @@ int checkMove(pedina *pedine, pedina *board[8][8], posizione *pos1, posizione *p
 
 /*************************************
 checkPedone()
-Verifica lo spostamento del pedone. Può avere 3 casi differenti.
-La mangiata: se il pedone viene mosso di un passo in diagonale, in direzione consona all suo .player.
-La casella di arrivo deve essere una pedina nemica, a parte in caso di controllo di scacco.
-Spostamento di 1: si sposta di un passo in avanti. La casella di arrivo deve essere vuota. Non valido per il controllo di scacco.
-Spostamento di 2: si sposta di 2 passi in avanti. Possibile solo al primo passo, la casella di arrivo deve essere vuota.
-Non valido per il controllo di scacco.
+Check pawn's move. It can have 3 different case.
+Eating: if the pawn is moved diagonally.
+Arriving square has to be an enemy pawn, except for a check control.
+Move of 1 square: move up by 1 square. Arriving square has to be empty. Not valid for check control.
+Move of 2 square: mvoe up by 2 square. Possible only at first step, arriving square has to be empty.
+Not valid for check control.
 
-Parametri in ingresso:
-    l1: coordnata 1 posizione di partenza
-    n1: coordinata 2 della posizione di partenza
-    l2: coordinata 1 della posizione di arrivo
-    n2: coordinata 2 della posizione di arrivo
-    pos1: puntatore alla posizione di partenza della pedina
-    pos2: puntatore alla posizione di arrivo della pedina
-    board: array bidimensionale di puntatori a struttura, con tutte le informazioni sulla scacchiera
-           e la posizione delle varie pedine
-    player: giocatore corrente
+Entering parameters:
+    l1: starting coordinate 1
+    n1: starting coordinate 2
+    l2: arriving coordinate 1
+    n2: arriving coordinate 2
+    pos1: puntator to pawn's starting position
+    pos2: puntator to pawn's arriving position
+    board: bidimensional array of puntator to struct, with all information about chessboard
+           and position of all pawns
+    player: current player
 
-Valore restituito:
+Returned value:
     0
 **************************************/
 int checkPedone(int l1, int n1, int l2, int n2, posizione *pos1, posizione *pos2, pedina *board[8][8], int player, int checkScacco)
 {
 	int step, o_player;
 	o_player=(player==0)?1:0;
-	//pedone che mangia
+	/*eating pawn*/
 	if((abs(l2-l1)==1 && n2==n1+1 && (*pos1).loc->player==0) ||
-		(abs(l2-l1)==1 && n2==n1-1 && (*pos1).loc->player==1))//controllo posizione finale
+		(abs(l2-l1)==1 && n2==n1-1 && (*pos1).loc->player==1))/*controlling final position*/
 	{
 		if (((*pos2).loc->player == o_player && checkScacco==0) || checkScacco==1)
-		{debug("controllo pedone mangia"); return 1;}
+		{debug("controllo pawn mangia"); return 1;}
 	}
-	//pedone si muove di 1
+	/*pawn moving by 1*/
 	if ((l2==l1 && n2==n1+1 && (*pos1).loc->player==0) ||
-		(l2==l1 && n2==n1-1 && (*pos1).loc->player==1))//controllo posizione finale
+		(l2==l1 && n2==n1-1 && (*pos1).loc->player==1))/*controlling final position*/
 	{
 		if((*pos2).loc->tipo == 'V' && checkScacco==0)
 		{
 			if((*pos2).n == 0 || (*pos2).n == 7) {(*pos1).loc->tipo = promozione();}
-			debug("controllo pedone muove 1");
+			debug("controllo pawn muove 1");
 			return 1;
 		}
 	}
-	//pedone si muove di 2
+	/*pawn moving by 2*/
 	if (checkScacco==0 && ((l2==l1 && n2==n1+2 && (*pos1).loc->moved==0 && (*pos1).loc->player==0) ||
-		(l2==l1 && n2==n1-2 && (*pos1).loc->moved==0 && (*pos1).loc->player==1)))//controllo posizione finale
+		(l2==l1 && n2==n1-2 && (*pos1).loc->moved==0 && (*pos1).loc->player==1)))/*controlling final position*/
 	{
 		step=(player==0)? n1+1 : n1-1;
-		if((*board[step][l2]).tipo == 'V' && (*pos2).loc->tipo == 'V') {debug("controllo pedone muove 2"); return 1;}
+		if((*board[step][l2]).tipo == 'V' && (*pos2).loc->tipo == 'V') {debug("controllo pawn muove 2"); return 1;}
 	}
-	debug("Controllo pedone fallito");
+	debug("Controllo pawn fallito");
 	return 0;
 }
 /**************************************
 promozione()
-Promuove il pedone nel caso giunga in fondo alla scacchiera.
+Promote pawn if it arrive to the end of the checkboard.
 
-Parametro in ingresso: nessuno
+Entering parameters: none
 
-Valore restituito:
-    ch: lettera che identifica la pedina scelta
+Returned value:
+    ch: charachter indicating moving pawn
 ***************************************/
 char promozione()
 {
 	char ch;
-	printf("\nIn cosa vuoi promuovere il pedone?\n");
+	printf("\nIn what do you want to promote your pawn?\n");
 	while(1)
 	{
 		printf("\nP - C - A - D\n");
@@ -1062,13 +1054,13 @@ char promozione()
 			case 'P': case 'C': case 'A': case 'D':
 				return ch;
 			default:
-				debug("\nCarattere errato: reinserire\n");
+				debug("\nWrong charachter: re-enter\n");
 		}
 	}
 }
 /***********************************
 checkTorre()
-Verifica lo spostamento della torre. Al variare di uno degli assi, l'altro deve restare invariato.
+Verify rook move. Al variare di uno degli assi, l'altro deve restare invariato.
 
 Parametri in ingresso:
     l1: coordnata 1 posizione di partenza
@@ -1093,23 +1085,23 @@ int checkTorre(int l1, int n1, int l2, int n2, pedina *board[8][8])
 			step=((step-c2) < 0)? step+1 : step-1;
 			if((*board[*cn][*cl]).tipo != 'V')
 			{
-				debug("Controllo torre fallito");
+				debug("Controllo rook fallito");
 				return 0;
 			}
 		}
-		debug("controllo torre ok");
+		debug("controllo rook ok");
 		return 1;
 	}
 	else
 	{
-		debug("Controllo torre fallito");
+		debug("Controllo rook fallito");
 		return 0;
 	}
 	return 1;
 }
 /*******************************************
 checkCavallo()
-Verifica lo spostamento del cavallo. Uno degli assi deve variare di 2, mentre l'altro di 1.
+Verifica lo spostamento del knight. Uno degli assi deve variare di 2, mentre l'altro di 1.
 
 Parametri in ingresso:
     l1: coordnata 1 posizione di partenza
@@ -1124,18 +1116,18 @@ int checkCavallo(int l1, int n1, int l2, int n2)
 {
 	if(abs(l1-l2)==2 && abs(n1-n2)==1 || abs(l1-l2)==1 && abs(n1-n2)==2)//controllo posizione finale
 	{
-		debug("controllo cavallo ok");
+		debug("controllo knight ok");
 		return 1;
 	}
 	else
 	{
-		debug("Controllo cavallo fallito");
+		debug("Controllo knight fallito");
 		return 0;
 	}
 }
 /*********************************************
 checkAlfiere()
-Verifica lo spostamento dell'alfiere. Entrambi gli assi devono variare della stessa quantità.
+Verifica lo spostamento dell'bishop. Entrambi gli assi devono variare della stessa quantità.
 
 Parametri in ingresso:
     l1: coordnata 1 posizione di partenza
@@ -1161,17 +1153,17 @@ int checkAlfiere(int l1, int n1, int l2, int n2, pedina *board[8][8])
 			sprintf(deb, " %d-%d ", cl, cn); debug(deb);
 			if((*board[cn][cl]).tipo != 'V')
 			{
-				debug("Controllo alfiere fallito");
+				debug("Controllo bishop fallito");
 				return 0;
 			}
 		}
 	}
 	else
 	{
-		debug("Controllo alfiere fallito");
+		debug("Controllo bishop fallito");
 		return 0;
 	}
-	debug("controllo alfiere ok");
+	debug("controllo bishop ok");
 	return 1;
 }
 /***********************************************
@@ -1254,7 +1246,7 @@ int scacco(int l, int n, int giocatore, pedina *board[8][8], pedina *pedine, int
 }
 /***********************************************
 checkArrocco()
-Controlla se è possibile eseguire l'arrocco
+Controlla se è possibile eseguire l'castling
 
 Parametri in ingresso:
     l1: coordnata 1 posizione di partenza
@@ -1282,7 +1274,7 @@ int checkArrocco(int l1, int n1, int l2, int n2, posizione *pos1, posizione *pos
 		lt = (l2==0)? l1-1 : l1+1;
 		if (scacco(l1, n1, o_player, board, pedine, player))
 		{
-			debug("Conrollo arrocco fallito");
+			debug("Conrollo castling fallito");
 			debug("\nRE sotto scacco");
 			return 0;
 		}
@@ -1291,26 +1283,26 @@ int checkArrocco(int l1, int n1, int l2, int n2, posizione *pos1, posizione *pos
 			step=((step-l2) < 0)? step+1 : step-1;
 			if(board[n1][step]->tipo != 'V')
 			{
-				debug("Controllo arrocco fallito");
-				debug("\nOstacolo tra RE e torre");
+				debug("Controllo castling fallito");
+				debug("\nOstacolo tra RE e rook");
 				return 0;
 			}
 		}
 		if (scacco(lr, n1, o_player, board, pedine, player) || scacco(lt, n1, o_player, board, pedine, player))
 			{
-				debug("Controllo arrocco fallito");
+				debug("Controllo castling fallito");
 				debug("\nPassaggio di RE sotto scacco");
 				return 0;
 			}
 	}
 	else
 	{
-		debug("Controllo arrocco fallito");
+		debug("Controllo castling fallito");
 		return 0;
 	}
 	move(l2, n2, lt, n2, board, pedine);
 	move(l1, n1, lr, n2, board, pedine);
-	debug("controllo arrocco ok");
+	debug("controllo castling ok");
 	return 1;
 }
 /***************************************
@@ -1387,13 +1379,13 @@ char vittoria(int player,char *name1,char *name2,struct mossa *testa,struct moss
 }
 /***************************************
 conteggio_celle()
-Tiene il conto delle mosse eseguite
+Count moves' number
 
-Parametri in ingresso:
-    numero_celle: numero delle mosse eseguite
+Entering parameters:
+    numero_celle: moves' number
 
-Valore restituito:
-    numero_celle: numero delle mosse eseguite
+Returned value:
+    numero_celle: moves' number
 ****************************************/
 int conteggio_celle(int numero_celle)
 {
